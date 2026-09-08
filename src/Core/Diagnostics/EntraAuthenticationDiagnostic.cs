@@ -1,0 +1,62 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using GitCredentialManager.Authentication.Entra;
+using Microsoft.Identity.Client.Extensions.Msal;
+
+namespace GitCredentialManager.Diagnostics
+{
+    public class EntraAuthenticationDiagnostic : Diagnostic
+    {
+        public EntraAuthenticationDiagnostic(ICommandContext context)
+            : base("Microsoft Entra authentication", context)
+        { }
+
+        protected override async Task<bool> RunInternalAsync(StringBuilder log, IList<string> additionalFiles)
+        {
+            var entraAuth = new EntraAuthentication(CommandContext, new PublicClientConfig
+            {
+                UseSharedCache = true,
+            });
+
+            log.Append("Gathering MSAL token cache data...");
+            StorageCreationProperties cacheProps = entraAuth.CreateUserTokenCacheProps(true);
+            log.AppendLine(" OK");
+            log.AppendLine($"CacheDirectory: {cacheProps.CacheDirectory}");
+            log.AppendLine($"CacheFileName: {cacheProps.CacheFileName}");
+            log.AppendLine($"CacheFilePath: {cacheProps.CacheFilePath}");
+
+            if (PlatformUtils.IsMacOS())
+            {
+                log.AppendLine($"MacKeyChainAccountName: {cacheProps.MacKeyChainAccountName}");
+                log.AppendLine($"MacKeyChainServiceName: {cacheProps.MacKeyChainServiceName}");
+            }
+            else if (PlatformUtils.IsLinux())
+            {
+                log.AppendLine($"KeyringCollection: {cacheProps.KeyringCollection}");
+                log.AppendLine($"KeyringSchemaName: {cacheProps.KeyringSchemaName}");
+                log.AppendLine($"KeyringSecretLabel: {cacheProps.KeyringSecretLabel}");
+                log.AppendLine($"KeyringAttribute1: ({cacheProps.KeyringAttribute1.Key},{cacheProps.KeyringAttribute1.Value})");
+                log.AppendLine($"KeyringAttribute2: ({cacheProps.KeyringAttribute2.Key},{cacheProps.KeyringAttribute2.Value})");
+            }
+
+            log.Append("Creating cache helper...");
+            var cacheHelper = await MsalCacheHelper.CreateAsync(cacheProps);
+            log.AppendLine(" OK");
+            try
+            {
+                log.Append("Verifying MSAL token cache persistence...");
+                cacheHelper.VerifyPersistence();
+                log.AppendLine(" OK");
+            }
+            catch (Exception)
+            {
+                log.AppendLine(" Failed");
+                throw;
+            }
+
+            return true;
+        }
+    }
+}

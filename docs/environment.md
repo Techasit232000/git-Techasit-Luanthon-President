@@ -437,7 +437,7 @@ _(unset)_|Automatically detect modes
 #### Windows
 
 ```batch
-SET GCM_BITBUCKET_AUTHMODES="oauth,basic"
+SET GCM_BITBUCKET_AUTHMODES=oauth,basic
 ```
 
 #### macOS/Linux
@@ -628,7 +628,7 @@ _(unset)_|Automatically detect modes
 #### Windows
 
 ```batch
-SET GCM_GITHUB_AUTHMODES="oauth,basic"
+SET GCM_GITHUB_AUTHMODES=oauth,basic
 ```
 
 #### macOS/Linux
@@ -659,7 +659,7 @@ _(unset)_|Automatically detect modes
 #### Windows
 
 ```batch
-SET GCM_GITLAB_AUTHMODES="browser"
+SET GCM_GITLAB_AUTHMODES=browser
 ```
 
 #### macOS/Linux
@@ -683,7 +683,7 @@ Defaults to the value `git`.
 #### Windows
 
 ```batch
-SET GCM_NAMESPACE="my-namespace"
+SET GCM_NAMESPACE=my-namespace
 ```
 
 #### macOS/Linux
@@ -721,7 +721,7 @@ _(unset)_|Windows: `wincredman`, macOS: `keychain`, Linux: _(none)_|-
 #### Windows
 
 ```batch
-SET GCM_CREDENTIAL_STORE="gpg"
+SET GCM_CREDENTIAL_STORE=gpg
 ```
 
 #### macOS/Linux
@@ -748,7 +748,7 @@ Defaults to empty.
 #### Windows
 
 ```batch
-SET GCM_CREDENTIAL_CACHE_OPTIONS="--timeout 300"
+SET GCM_CREDENTIAL_CACHE_OPTIONS=--timeout 300
 ```
 
 #### macOS/Linux
@@ -843,7 +843,7 @@ Value|Authentication Flow
 #### Windows
 
 ```batch
-SET GCM_MSAUTH_FLOW="devicecode"
+SET GCM_MSAUTH_FLOW=devicecode
 ```
 
 #### macOS/Linux
@@ -877,7 +877,7 @@ Value|Description
 #### Windows
 
 ```batch
-SET GCM_MSAUTH_USEBROKER="true"
+SET GCM_MSAUTH_USEBROKER=true
 ```
 
 #### macOS/Linux
@@ -907,7 +907,7 @@ Value|Description
 #### Windows
 
 ```batch
-SET GCM_MSAUTH_USEDEFAULTACCOUNT="true"
+SET GCM_MSAUTH_USEDEFAULTACCOUNT=true
 ```
 
 #### macOS/Linux
@@ -938,7 +938,7 @@ More information about Azure Access tokens can be found [here][azure-access-toke
 #### Windows
 
 ```batch
-SET GCM_AZREPOS_CREDENTIALTYPE="oauth"
+SET GCM_AZREPOS_CREDENTIALTYPE=oauth
 ```
 
 #### macOS/Linux
@@ -978,7 +978,7 @@ Value|Description
 #### Windows
 
 ```batch
-SET GCM_AZREPOS_MANAGEDIDENTITY="id://11111111-1111-1111-1111-111111111111"
+SET GCM_AZREPOS_MANAGEDIDENTITY=id://11111111-1111-1111-1111-111111111111
 ```
 
 #### macOS/Linux
@@ -988,6 +988,172 @@ export GCM_AZREPOS_MANAGEDIDENTITY="id://11111111-1111-1111-1111-111111111111"
 ```
 
 **Also see: [credential.azreposManagedIdentity][credential-azrepos-managedidentity]**
+
+---
+
+### GCM_AZREPOS_WIF
+
+Use [Workload Identity Federation][wif] to authenticate with Azure Repos.
+
+The value specifies the federation scenario to use for obtaining a client
+assertion to exchange for an access token.
+
+You must also set the following companion settings:
+
+- [GCM_AZREPOS_WIF_CLIENTID][gcm-azrepos-wif-clientid]
+- [GCM_AZREPOS_WIF_TENANTID][gcm-azrepos-wif-tenantid]
+
+Depending on the scenario, additional settings may be required.
+
+Value|Description
+-|-
+`generic`|Use a user-supplied client assertion ([GCM_AZREPOS_WIF_ASSERTION][gcm-azrepos-wif-assertion])
+`managedidentity`|Use a [Managed Identity][managed-identity] to obtain the federated token ([GCM_AZREPOS_WIF_MANAGEDIDENTITY][gcm-azrepos-wif-managedidentity])
+`githubactions`|Automatically obtain an OIDC token from GitHub Actions
+
+For more information about workload identity federation, see the
+[conceptual documentation][azrepos-wif-doc] and the Azure DevOps
+[documentation][azrepos-sp-mid].
+
+#### Windows
+
+```batch
+SET GCM_AZREPOS_WIF=githubactions
+```
+
+#### macOS/Linux
+
+```bash
+export GCM_AZREPOS_WIF="githubactions"
+```
+
+**Also see: [credential.azreposWorkloadFederation][credential-azrepos-wif]**
+
+---
+
+### GCM_AZREPOS_WIF_CLIENTID
+
+The client ID of the app registration / service principal to request an access
+token for when using [Workload Identity Federation][wif] with
+[GCM_AZREPOS_WIF][gcm-azrepos-wif].
+
+#### Windows
+
+```batch
+SET GCM_AZREPOS_WIF_CLIENTID=11111111-1111-1111-1111-111111111111
+```
+
+#### macOS/Linux
+
+```bash
+export GCM_AZREPOS_WIF_CLIENTID="11111111-1111-1111-1111-111111111111"
+```
+
+**Also see: [credential.azreposWorkloadFederationClientId][credential-azrepos-wif-clientid]**
+
+---
+
+### GCM_AZREPOS_WIF_TENANTID
+
+The tenant ID of the app registration / service principal to request an access
+token for when using [Workload Identity Federation][wif] with
+[GCM_AZREPOS_WIF][gcm-azrepos-wif].
+
+#### Windows
+
+```batch
+SET GCM_AZREPOS_WIF_TENANTID=22222222-2222-2222-2222-222222222222
+```
+
+#### macOS/Linux
+
+```bash
+export GCM_AZREPOS_WIF_TENANTID="22222222-2222-2222-2222-222222222222"
+```
+
+**Also see: [credential.azreposWorkloadFederationTenantId][credential-azrepos-wif-tenantid]**
+
+---
+
+### GCM_AZREPOS_WIF_AUDIENCE
+
+The audience to use when requesting the federated token for
+[Workload Identity Federation][wif] with
+[GCM_AZREPOS_WIF][gcm-azrepos-wif].
+
+Defaults to `api://AzureADTokenExchange`.
+
+#### Windows
+
+```batch
+SET GCM_AZREPOS_WIF_AUDIENCE=api://AzureADTokenExchange
+```
+
+#### macOS/Linux
+
+```bash
+export GCM_AZREPOS_WIF_AUDIENCE="api://AzureADTokenExchange"
+```
+
+**Also see: [credential.azreposWorkloadFederationAudience][credential-azrepos-wif-audience]**
+
+---
+
+### GCM_AZREPOS_WIF_ASSERTION
+
+Specifies the client assertion token to use with the `generic`
+[Workload Identity Federation][wif] scenario
+([GCM_AZREPOS_WIF][gcm-azrepos-wif]).
+
+This setting is required when `GCM_AZREPOS_WIF` is set to `generic`.
+
+#### Windows
+
+```batch
+SET GCM_AZREPOS_WIF_ASSERTION=eyJhbGci...
+```
+
+#### macOS/Linux
+
+```bash
+export GCM_AZREPOS_WIF_ASSERTION="eyJhbGci..."
+```
+
+**Also see: [credential.azreposWorkloadFederationAssertion][credential-azrepos-wif-assertion]**
+
+---
+
+### GCM_AZREPOS_WIF_MANAGEDIDENTITY
+
+Specifies the [Managed Identity][managed-identity] to use to obtain a federated
+token for the `managedidentity` [Workload Identity Federation][wif] scenario
+([GCM_AZREPOS_WIF][gcm-azrepos-wif]).
+
+This setting is required when `GCM_AZREPOS_WIF` is set to `managedidentity`.
+
+The value accepts the same formats as
+[GCM_AZREPOS_MANAGEDIDENTITY](#gcm_azrepos_managedidentity).
+
+Value|Description
+-|-
+`system`|System-Assigned Managed Identity
+`[guid]`|User-Assigned Managed Identity with the specified client ID
+`id://[guid]`|User-Assigned Managed Identity with the specified client ID
+`resource://[guid]`|User-Assigned Managed Identity for the associated resource
+
+#### Windows
+
+```batch
+SET GCM_AZREPOS_WIF_MANAGEDIDENTITY=system
+```
+
+#### macOS/Linux
+
+```bash
+export GCM_AZREPOS_WIF_MANAGEDIDENTITY="system"
+```
+
+**Also see: [credential.azreposWorkloadFederationManagedIdentity][credential-azrepos-wif-managedidentity]**
 
 ---
 
@@ -1009,7 +1175,7 @@ For more information about service principals, see the Azure DevOps
 #### Windows
 
 ```batch
-SET GCM_AZREPOS_SERVICE_PRINCIPAL="11111111-1111-1111-1111-111111111111/22222222-2222-2222-2222-222222222222"
+SET GCM_AZREPOS_SERVICE_PRINCIPAL=11111111-1111-1111-1111-111111111111/22222222-2222-2222-2222-222222222222
 ```
 
 #### macOS/Linux
@@ -1031,7 +1197,7 @@ performing Microsoft authentication for Azure Repos with
 #### Windows
 
 ```batch
-SET GCM_AZREPOS_SP_SECRET="da39a3ee5e6b4b0d3255bfef95601890afd80709"
+SET GCM_AZREPOS_SP_SECRET=da39a3ee5e6b4b0d3255bfef95601890afd80709
 ```
 
 #### macOS/Linux
@@ -1053,7 +1219,7 @@ Specifies the thumbprint of a certificate to use when authenticating as a
 #### Windows
 
 ```batch
-SET GCM_AZREPOS_SP_CERT_THUMBPRINT="9b6555292e4ea21cbc2ebd23e66e2f91ebbe92dc"
+SET GCM_AZREPOS_SP_CERT_THUMBPRINT=9b6555292e4ea21cbc2ebd23e66e2f91ebbe92dc
 ```
 
 #### macOS/Linux
@@ -1079,7 +1245,7 @@ certificate rollover. For details see [https://aka.ms/msal-net-sni](https://aka.
 #### Windows
 
 ```batch
-SET GCM_AZREPOS_SP_CERT_SEND_X5C="true"
+SET GCM_AZREPOS_SP_CERT_SEND_X5C=true
 ```
 
 #### macOS/Linux
@@ -1186,6 +1352,12 @@ Defaults to disabled.
 [credential-autodetecttimeout]: configuration.md#credentialautodetecttimeout
 [credential-azrepos-credential-type]: configuration.md#credentialazreposcredentialtype
 [credential-azrepos-managedidentity]: configuration.md#credentialazreposmanagedidentity
+[credential-azrepos-wif]: configuration.md#credentialazreposworkloadfederation
+[credential-azrepos-wif-clientid]: configuration.md#credentialazreposworkloadfederationclientid
+[credential-azrepos-wif-tenantid]: configuration.md#credentialazreposworkloadfederationtenantid
+[credential-azrepos-wif-audience]: configuration.md#credentialazreposworkloadfederationaudience
+[credential-azrepos-wif-assertion]: configuration.md#credentialazreposworkloadfederationassertion
+[credential-azrepos-wif-managedidentity]: configuration.md#credentialazreposworkloadfederationmanagedidentity
 [credential-bitbucketauthmodes]: configuration.md#credentialbitbucketAuthModes
 [credential-cacheoptions]: configuration.md#credentialcacheoptions
 [credential-credentialstore]: configuration.md#credentialcredentialstore
@@ -1224,6 +1396,7 @@ Defaults to disabled.
 [network-http-proxy]: netconfig.md#http-proxy
 [libsecret]: https://wiki.gnome.org/Projects/Libsecret
 [managed-identity]: https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
+[wif]: https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation
 [migration-guide]: migration.md#gcm_authority
 [passwordstore]: https://www.passwordstore.org/
 [trace2-normal-docs]: https://git-scm.com/docs/api-trace2#_the_normal_format_target
@@ -1235,6 +1408,13 @@ Defaults to disabled.
 [windows-broker]: windows-broker.md
 [service-principal]: https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals
 [azrepos-sp-mid]: https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity
+[azrepos-wif-doc]: azrepos-wif.md
+[gcm-azrepos-wif]: #gcm_azrepos_wif
+[gcm-azrepos-wif-clientid]: #gcm_azrepos_wif_clientid
+[gcm-azrepos-wif-tenantid]: #gcm_azrepos_wif_tenantid
+[gcm-azrepos-wif-audience]: #gcm_azrepos_wif_audience
+[gcm-azrepos-wif-assertion]: #gcm_azrepos_wif_assertion
+[gcm-azrepos-wif-managedidentity]: #gcm_azrepos_wif_managedidentity
 [gcm-azrepos-sp]: #gcm_azrepos_service_principal
 [gcm-azrepos-sp-secret]: #gcm_azrepos_sp_secret
 [gcm-azrepos-sp-cert-thumbprint]: #gcm_azrepos_sp_cert_thumbprint
